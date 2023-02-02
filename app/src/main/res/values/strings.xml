@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BMI Calculator</string>
+
+    <!--  HEADER  -->
+    <string name="app_title">BMI CALCULATOR</string>
+
+    <!--  FORM  -->
+    <string name="weight">Your weight in KG</string>
+    <string name="height">Your height in CM</string>
+    <string name="button_calculate">CALCULATE</string>
+
+    <!--  FOOTER  -->
+    <string name="your_score">Your Score</string>
+    <string name="reset_button">Reset</string>
+    <string name="share_button">Share</string>
+</resources>
