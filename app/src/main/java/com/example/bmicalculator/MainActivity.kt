@@ -51,7 +51,7 @@ fun BMICalculator() {
         mutableStateOf("")
     }
 
-    Column( // Container
+    Column(  // Container
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
