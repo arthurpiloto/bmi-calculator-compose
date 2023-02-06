@@ -3,6 +3,7 @@ package com.example.bmicalculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bmicalculator.ui.theme.BMICalculatorTheme
+import com.example.bmicalculator.utils.bmiCalculate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +55,21 @@ fun BMICalculator() {
         mutableStateOf("")
     }
 
-    Column(  // Container
+    var expandState by remember {
+        mutableStateOf(false)
+    }
+
+    var bmiResultState by remember {
+        mutableStateOf(0.0)
+    }
+
+    // Objeto que controla a requisição de foco (RequestFocus)
+    val weightFocusRequester = FocusRequester()
+
+    Column( // Container
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Center
     ) {
 
         Column( // Header
@@ -76,21 +91,30 @@ fun BMICalculator() {
             )
         }
 
-        Column(
+        Column( // Form
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 32.dp, end = 32.dp, top = 36.dp)
-        ) { // Form
+        ) {
             Text(
                 text = stringResource(id = R.string.weight),
                 modifier = Modifier.padding(bottom = 8.dp),
                 fontSize = 16.sp
             )
             OutlinedTextField(
-                value = weightState, onValueChange = {
-                    weightState = it
+                value = weightState,
+                onValueChange = { newWeight ->
+                    var lastChar =
+                         if (newWeight.isEmpty()) newWeight
+                         else newWeight.get(newWeight.length - 1)
+                    var newValue =
+                        if (lastChar == '.' || lastChar == ',') newWeight.dropLast(1)
+                        else newWeight
+                    weightState = newValue
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(weightFocusRequester),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
@@ -104,8 +128,14 @@ fun BMICalculator() {
                 fontSize = 16.sp
             )
             OutlinedTextField(
-                value = heightState, onValueChange = {
-                    heightState = it
+                value = heightState, onValueChange = { newHeight ->
+                    var lastChar =
+                        if (newHeight.isEmpty()) newHeight
+                        else newHeight.get(newHeight.length - 1)
+                    var newValue =
+                        if (lastChar == '.' || lastChar == ',') newHeight.dropLast(1)
+                        else newHeight
+                    heightState = newValue
                 },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -113,7 +143,10 @@ fun BMICalculator() {
             )
 
             Button(
-                onClick = {},
+                onClick = {
+                    bmiResultState = bmiCalculate(weightState.toInt(), heightState.toDouble())
+                    expandState = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp)
@@ -131,16 +164,25 @@ fun BMICalculator() {
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Column() {// Footer
-            Card(
+        AnimatedVisibility(
+            visible = expandState
+//            enter = slideIn(tween(400, easing = FastOutSlowInEasing)) {
+//                IntOffset(1000, 100)
+//            },
+//            exit = slideOut(tween(200, easing = FastOutSlowInEasing)) {
+//                IntOffset(-1000, 100)
+//            }
+        ) {
+            Card( // Footer
                 modifier = Modifier
-                    .fillMaxHeight(0.7f)
+                    .fillMaxHeight(1f)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(topEnd = 32.dp, topStart = 32.dp),
                 backgroundColor = MaterialTheme.colors.primary
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -152,7 +194,7 @@ fun BMICalculator() {
                     )
 
                     Text(
-                        text = "0.00",
+                        text = String.format("%.2f", bmiResultState),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -167,7 +209,12 @@ fun BMICalculator() {
                     Row() {
 
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                expandState = false
+                                weightState = ""
+                                heightState = ""
+                                weightFocusRequester.requestFocus()
+                            },
                             colors = ButtonDefaults.buttonColors(Color(153, 111, 221, 255))
                         ) {
                             Text(
@@ -189,7 +236,6 @@ fun BMICalculator() {
                                 fontWeight = FontWeight.W600
                             )
                         }
-
                     }
                 }
             }
