@@ -1,6 +1,7 @@
 package com.example.bmicalculator
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -9,6 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Adjust
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -63,6 +69,14 @@ fun BMICalculator() {
         mutableStateOf(0.0)
     }
 
+    var errorWeightState by remember {
+        mutableStateOf(false)
+    }
+
+    var errorHeightState by remember {
+        mutableStateOf(false)
+    }
+
     // Objeto que controla a requisição de foco (RequestFocus)
     val weightFocusRequester = FocusRequester()
 
@@ -115,6 +129,8 @@ fun BMICalculator() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(weightFocusRequester),
+//                trailingIcon = { Icon(imageVector = Icons.Default.Adjust, contentDescription = "")},
+                isError = errorWeightState,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
@@ -128,7 +144,8 @@ fun BMICalculator() {
                 fontSize = 16.sp
             )
             OutlinedTextField(
-                value = heightState, onValueChange = { newHeight ->
+                value = heightState,
+                onValueChange = { newHeight ->
                     var lastChar =
                         if (newHeight.isEmpty()) newHeight
                         else newHeight.get(newHeight.length - 1)
@@ -138,14 +155,20 @@ fun BMICalculator() {
                     heightState = newValue
                 },
                 modifier = Modifier.fillMaxWidth(),
+                isError = errorHeightState,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(12.dp)
             )
 
             Button(
                 onClick = {
-                    bmiResultState = bmiCalculate(weightState.toInt(), heightState.toDouble())
-                    expandState = true
+                    errorWeightState = weightState.isEmpty()
+                    errorHeightState = heightState.isEmpty()
+
+                    if (errorWeightState == false && errorHeightState == false) {
+                        bmiResultState = bmiCalculate(weightState.toInt(), heightState.toDouble())
+                        expandState = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
