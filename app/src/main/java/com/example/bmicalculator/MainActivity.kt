@@ -59,6 +59,7 @@ fun BMICalculator() {
         mutableStateOf(false)
     }
 
+
     var bmiResultState by remember {
         mutableStateOf(0.0)
     }
@@ -135,6 +136,15 @@ fun BMICalculator() {
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
             )
+            AnimatedVisibility(
+                visible = errorWeightState
+            ) {
+                Text(
+                    text = stringResource(id = R.string.weight_help),
+                    color = Color.Red,
+                    fontSize = 10.sp
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -165,6 +175,16 @@ fun BMICalculator() {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(12.dp)
             )
+            AnimatedVisibility(
+                visible = errorHeightState
+            ) {
+                Text(
+                    text = stringResource(id = R.string.height_help),
+                    color = Color.Red,
+                    fontSize = 10.sp
+                )
+            }
+
 
             Button(
                 onClick = {
