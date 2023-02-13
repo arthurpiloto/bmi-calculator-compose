@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bmicalculator.ui.theme.BMICalculatorTheme
 import com.example.bmicalculator.utils.bmiCalculate
+import com.example.bmicalculator.utils.getString
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +61,6 @@ fun BMICalculator() {
     var expandState by remember {
         mutableStateOf(false)
     }
-
 
     var bmiResultState by remember {
         mutableStateOf(0.0)
@@ -252,7 +252,7 @@ fun BMICalculator() {
                     )
 
                     Text(
-                        text = "Congratulations! Your weight is ideal!",
+                        text = getString(bmiResultState),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center

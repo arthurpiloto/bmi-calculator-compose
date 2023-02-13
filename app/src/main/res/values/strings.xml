@@ -15,4 +15,13 @@
     <string name="your_score">Your Score</string>
     <string name="reset_button">Reset</string>
     <string name="share_button">Share</string>
+
+    <!--  MESSAGE LIST OF BMI  -->
+    <string name="unknown">Unknown</string>
+    <string name="underweight">Underweight</string>
+    <string name="normal_weight">Normal Weight</string>
+    <string name="overweight">Overweight</string>
+    <string name="obese_i">Obese Class I</string>
+    <string name="obese_ii">Obese Class II</string>
+    <string name="obese_iii">Obese Class III</string>
 </resources>
