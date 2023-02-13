@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -130,7 +132,7 @@ fun BMICalculator() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(weightFocusRequester),
-//                trailingIcon = { Icon(imageVector = Icons.Default.Adjust, contentDescription = "")},
+                trailingIcon = {if (errorWeightState) Icon(imageVector = Icons.Default.Error, contentDescription = "")},
                 isError = errorWeightState,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -171,6 +173,7 @@ fun BMICalculator() {
                     heightState = newValue
                 },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {if (errorHeightState) Icon(imageVector = Icons.Default.Error, contentDescription = "")},
                 isError = errorHeightState,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(12.dp)
