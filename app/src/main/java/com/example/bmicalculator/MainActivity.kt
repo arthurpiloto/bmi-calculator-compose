@@ -1,7 +1,6 @@
 package com.example.bmicalculator
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -10,11 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Adjust
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -53,11 +47,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BMICalculator() {
 
-    var weightState by rememberSaveable() {
+    var weightState by rememberSaveable {
         mutableStateOf("")
     }
 
-    var heightState by rememberSaveable() {
+    var heightState by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -118,10 +112,16 @@ fun BMICalculator() {
             OutlinedTextField(
                 value = weightState,
                 onValueChange = { newWeight ->
-                    var lastChar =
-                         if (newWeight.isEmpty()) newWeight
-                         else newWeight.get(newWeight.length - 1)
-                    var newValue =
+                    val lastChar =
+                         if (newWeight.isEmpty()) {
+                             errorWeightState = true
+                             newWeight
+                         }
+                         else {
+                             newWeight.get(newWeight.length - 1)
+                             errorWeightState = false
+                         }
+                    val newValue =
                         if (lastChar == '.' || lastChar == ',') newWeight.dropLast(1)
                         else newWeight
                     weightState = newValue
@@ -146,10 +146,16 @@ fun BMICalculator() {
             OutlinedTextField(
                 value = heightState,
                 onValueChange = { newHeight ->
-                    var lastChar =
-                        if (newHeight.isEmpty()) newHeight
-                        else newHeight.get(newHeight.length - 1)
-                    var newValue =
+                    val lastChar =
+                        if (newHeight.isEmpty()) {
+                            errorHeightState = true
+                            newHeight
+                        }
+                        else {
+                            newHeight.get(newHeight.length - 1)
+                            errorHeightState = false
+                        }
+                    val newValue =
                         if (lastChar == '.' || lastChar == ',') newHeight.dropLast(1)
                         else newHeight
                     heightState = newValue
@@ -165,7 +171,7 @@ fun BMICalculator() {
                     errorWeightState = weightState.isEmpty()
                     errorHeightState = heightState.isEmpty()
 
-                    if (errorWeightState == false && errorHeightState == false) {
+                    if (!errorWeightState && !errorHeightState) {
                         bmiResultState = bmiCalculate(weightState.toInt(), heightState.toDouble())
                         expandState = true
                     }
@@ -229,7 +235,7 @@ fun BMICalculator() {
                         textAlign = TextAlign.Center
                     )
 
-                    Row() {
+                    Row {
 
                         Button(
                             onClick = {
